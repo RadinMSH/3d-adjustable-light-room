@@ -6,4 +6,8 @@ Hi guys, this is another project created by me using THREE.js; this is a short d
 3. Open and close the folders, or the full light controller panel
 4. Change the color of the room light
 5. Change the light's position in all (x,y,z) directions
-6. Change the power, 
+6. Change the power, decay, intensity and...
+
+Hope you all like this project!
+
+&copy; 2021 RadinMSH all rights reserved, even if no licenses are added! 🙏
