@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title> 3D Room With Adjustable Light </title>
+        <meta name="viewport" content="width=device-width" />
+        <meta charset="UTF-16" />
+        <style>
+            
+            
+            body {margin: 0;}
+            
+            :root {background: black;}
+            
+            * {
+                user-select: none;
+                box-sizing: border-box;
+                color: #fff;
+            }
+            
+            canvas {
+                width: 100vw;
+                height: 100vh;
+                transition: 1s;
+                opacity: 0;
+                z-index: 1;
+            }
+            
+            h3 {
+                position: absolute;
+                -webkit-position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            
+            h3, span {font-family: serif;}
+            
+            
+        </style>
+    </head>
+    <body>
+        <h3><span>0</span>% LOADED</h3>
+        <canvas> Sorry your browser doesn't support &lt;canvas> </canvas>
+        <script type="module">
+            
+            
+            import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r127/build/three.module.js";
+            import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/examples/jsm/controls/OrbitControls.js';
+            import {GUI} from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/examples/jsm/libs/dat.gui.module.js';
+            
+            alert('HTML: 12\nCSS: 8%\nJS: 80%\n\n© Created by Radin Masiha');
+            alert('Features\n\n• Walk in the way with two fingers\n• Rotate the scene using your finger\n• Control the light by the Light Controller\n• Random colors available\n• Random positions available');
+            alert("The project's quality depends on your device RAM stotage!\nHigher memory = Higher quality...\n\nHope you all like");
+            
+            let w = window.innerWidth;
+            let h = window.innerHeight;
+            let canvas = document.querySelector("canvas");
+            let h3 = document.querySelector("h3");
+            let span = document.querySelector("span");
+            let load = 0;
+            
+            class ColorHelper {
+                constructor(object, property) {
+                    this.obj = object;
+                    this.prop = property;
+                }
+                set value(hex) {
+                    this.obj[this.prop].set(hex);
+                }
+                get value() {
+                    return `#${this.obj[this.prop].getHexString()}`;
+                }
+            }
+            
+            function rand(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            
+            const td = THREE;
+            const scene = new td.Scene();
+            const cam = new td.PerspectiveCamera(50, w/h, .1, 1000);
+            const controls = new OrbitControls(cam, canvas);
+            const light = new td.PointLight();
+            const gui = new GUI();
+            const loader = new td.TextureLoader();
+            const renderer = new td.WebGLRenderer({canvas, antialias:true});
+            const quality = 2.425 * navigator.deviceMemory / 4;
+            const width = canvas.clientWidth * quality | 0;
+            const height = canvas.clientHeight * quality | 0;
+            const lightBulbGeo = new td.SphereGeometry(1, 100, 100);
+            const lightBulbMat = new td.MeshBasicMaterial();
+            const lightBulb = new td.Mesh(lightBulbGeo, lightBulbMat);
+            const mat = new td.MeshPhongMaterial({color:`rgb(${rand(50, 250)}, ${rand(50, 250)}, ${rand(50, 250)})`, flatShading:true});
+            const sphereGeo = new td.SphereGeometry(4, 100, 100);
+            const cubeGeo = new td.BoxGeometry(4,4,4);
+            const coneGeo = new td.ConeGeometry(4, 8, rand(3, 50));
+            const cylinderGeo = new td.CylinderGeometry(4, 4, 8, rand(5, 50));
+
+const sphere = new td.Mesh(sphereGeo, mat);
+            const cube = new td.Mesh(cubeGeo, mat);
+            const cone = new td.Mesh(coneGeo, mat);
+            const cylinder = new td.Mesh(cylinderGeo, mat);
+            const roomGeo = new td.BoxGeometry(50, 50, 50);
+            const roomMat = new td.MeshStandardMaterial({
+                map: loader.load("https://www.dl.dropboxusercontent.com/s/mdndcgy4anjyng6/Walls.jpg", t => {
+                    t.wrapS = t.wrapT = td.RepeatWrapping;
+                    t.magFilter = td.NearestFilter;
+                    t.repeat.set(10, 10);
+                    load += 50;
+                }),
+                side: td.BackSide,
+            });
+            const room = new td.Mesh(roomGeo, roomMat);
+            const floorGeo = new td.PlaneGeometry(50, 50);
+            const floorMat = new td.MeshStandardMaterial({
+                map: loader.load("https://www.dl.dropboxusercontent.com/s/79svia9jj27qiml/Floor.jpg", t => {
+                    t.wrapS = t.wrapT = td.RepeatWrapping;
+                    t.magFilter = td.NearestFilter;
+                    t.repeat.set(10, 10);
+                    load += 50;
+                }),
+                side: td.DoubleSide,
+            });
+            const floor = new td.Mesh(floorGeo, floorMat);
+            
+            cam.position.y = -23.4;
+            renderer.shadowMap.enabled = true;
+            controls.enableZoom = false;
+            controls.rotateSpeed *= -1;
+            light.position.y = 20;
+            light.power = 15;
+            light.castShadow = sphere.castShadow = cube.castShadow = cone.castShadow = cylinder.castShadow = true;
+            light.shadow.mapSize.width = 6000;
+            light.shadow.mapSize.height = 6000;
+            room.receiveShadow = floor.receiveShadow = true;
+            floor.rotation.x = Math.PI * -.5;
+            floor.position.y = -24.9;
+            sphere.position.set(rand(-21, -11), -21, rand(-21, -11));
+            cube.position.set(rand(-10, 0), -23, rand(-10, 0));
+            cone.position.set(rand(1, 10), -21, rand(1, 10));
+            cylinder.position.set(rand(11, 21), -21, rand(11, 21));
+            
+            scene.add(room);
+            scene.add(floor);
+            scene.add(light);
+            scene.add(lightBulb);
+            scene.add(sphere);
+            scene.add(cube);
+            scene.add(cone);
+            scene.add(cylinder);
+            
+            let lightFolder = gui.addFolder('Light Controller');
+            lightFolder.addColor(new ColorHelper(light, 'color'), 'value').name('color');
+            lightFolder.add(light, 'intensity', 0, 2);
+            lightFolder.add(light, 'decay', 0, 4);
+            lightFolder.add(light, 'power', 0, 50);
+            let pos = lightFolder.addFolder("Position");
+            pos.add(light.position, 'x', -20, 20);
+            pos.add(light.position, 'y', -20, 20);
+            pos.add(light.position, 'z', -20, 20);
+            lightFolder.open();
+            pos.open();
+            
+            const render = () => {
+                renderer.setSize(width, height, false);
+                cam.aspect = canvas.clientWidth / canvas.clientHeight;
+                cam.updateProjectionMatrix();
+                lightBulb.position.set(light.position.x, light.position.y, light.position.z);
+                lightBulb.material.color.setHex(`0x${light.color.getHexString()}`);
+                renderer.render(scene, cam);
+                window.requestAnimationFrame(render);
+            };
+            window.requestAnimationFrame(render);
+            
+            window.onload = () => {
+                setInterval(() => {
+                    span.innerText = load;
+                    
+                    if(load == 100) {
+                        canvas.style.opacity = 1;
+                        setTimeout(() => h3.remove(), 1000);
+                    }
+                }, 1);
+            };
+            
+            
+        </script>
+        <noscript>
+            <h1> Browser Support Error </h1>
+            <p> Your browser doesn't support JavaScript, or your
+
+JavaScript option is disabled! </p>
+        </noscript>
+    </body>
+</html>
