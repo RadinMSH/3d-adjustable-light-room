@@ -107,7 +107,7 @@
             const cylinder = new td.Mesh(cylinderGeo, mat);
             const roomGeo = new td.BoxGeometry(50, 50, 50);
             const roomMat = new td.MeshStandardMaterial({
-                map: loader.load("https://www.dl.dropboxusercontent.com/s/mdndcgy4anjyng6/Walls.jpg", t => {
+                map: loader.load("Textures/Walls.jpg", t => {
                     t.wrapS = t.wrapT = td.RepeatWrapping;
                     t.magFilter = td.NearestFilter;
                     t.repeat.set(10, 10);
@@ -118,7 +118,7 @@
             const room = new td.Mesh(roomGeo, roomMat);
             const floorGeo = new td.PlaneGeometry(50, 50);
             const floorMat = new td.MeshStandardMaterial({
-                map: loader.load("https://www.dl.dropboxusercontent.com/s/79svia9jj27qiml/Floor.jpg", t => {
+                map: loader.load("Textures/Floor.jpg", t => {
                     t.wrapS = t.wrapT = td.RepeatWrapping;
                     t.magFilter = td.NearestFilter;
                     t.repeat.set(10, 10);
